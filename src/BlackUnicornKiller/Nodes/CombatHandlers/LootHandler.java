@@ -23,15 +23,15 @@ public class LootHandler extends Job {
     Rectangle screen = new Rectangle(1,55,518,258);
     GroundItem Loot;
 
-  //  public void altCameraTurnTo(GroundItem e){
-  //      Timer timeCheck = new Timer(Random.nextInt(2800, 3400));
-  //      do{
-  //          ctx.camera.setAngle(ctx.camera.getYaw() + Random.nextInt(35, 55));
-  //          if(e == null){
-  //              break;
-  //          }
-  //     }while(!altIsOnScreen(e) && timeCheck.isRunning());
-  //  }
+    public void altCameraTurnTo(GroundItem e){
+        Timer timeCheck = new Timer(Random.nextInt(2800, 3400));
+        do{
+            ctx.camera.setYaw(ctx.camera.getYaw() + Random.nextInt(35, 55));
+            if(e == null){
+                break;
+            }
+       }while(!altIsOnScreen(e) && timeCheck.isRunning());
+    }
 
     public boolean invChangeSleep(){
         Timer timeCheck = new Timer(Random.nextInt(1200,1600));
@@ -98,8 +98,7 @@ public class LootHandler extends Job {
                         BlackUnicornKiller.status = "Walking towards Loot";
                         ctx.movement.findPath(loot).traverse();
                         BlackUnicornKiller.status = "Turning Camera to Loot";
-                       // altCameraTurnTo(Loot);
-                        ctx.movement.findPath(Loot).traverse();
+                        altCameraTurnTo(Loot);
                         if(loot.interact("Take")){
                             invChangeSleep();
                         }

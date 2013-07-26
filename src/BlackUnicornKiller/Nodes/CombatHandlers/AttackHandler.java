@@ -27,15 +27,15 @@ public class AttackHandler extends Job {
     Actor interacting;
     Actor me;
 
-  //  public void altCameraTurnTo(Actor e){
-  //      Timer timeCheck = new Timer(Random.nextInt(2800, 3200));
-  //      do{
-  //          ctx.camera.setAngle(ctx.camera.getYaw() + Random.nextInt(35, 55));
-  //          if(e == null){
-  //              break;
-  //          }
-  //      }while(!altIsOnScreen(e) && timeCheck.isRunning());
-  //  }
+    public void altCameraTurnTo(Actor e){
+        Timer timeCheck = new Timer(Random.nextInt(2800, 3200));
+        do{
+            ctx.camera.setYaw(ctx.camera.getYaw() + Random.nextInt(35, 55));
+            if(e == null){
+                break;
+            }
+        }while(!altIsOnScreen(e) && timeCheck.isRunning());
+    }
 
     public boolean altIsOnScreen(Actor e){
         Integer numOfPoints;
@@ -75,13 +75,11 @@ public class AttackHandler extends Job {
             if(theUnicorn != null){
                 if(me.getLocation().distanceTo(theUnicorn)>=4){
                     if(!altIsOnScreen(theUnicorn)){
-                        ctx.movement.findPath(theUnicorn).traverse();
-                    //    altCameraTurnTo(theUnicorn);
+                        altCameraTurnTo(theUnicorn);
                     }
                 }
                 if(!altIsOnScreen(theUnicorn)){
-                    ctx.movement.findPath(theUnicorn).traverse();
-                    //altCameraTurnTo(theUnicorn);
+                    altCameraTurnTo(theUnicorn);
                 }
                 if(me.getLocation().distanceTo(theUnicorn)>=8){
                     ctx.movement.findPath(theUnicorn).traverse();
@@ -90,8 +88,7 @@ public class AttackHandler extends Job {
                     ctx.movement.findPath(theUnicorn).traverse();
                     theUnicorn.interact("Attack");
                 }
-                ctx.movement.findPath(theUnicorn).traverse();
-                //altCameraTurnTo(theUnicorn);
+                altCameraTurnTo(theUnicorn);
                 if(!me.isInCombat()){
                     theUnicorn.interact("Attack");
                 }
