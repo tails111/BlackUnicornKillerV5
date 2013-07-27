@@ -130,14 +130,6 @@ public class BlackUnicornKiller extends PollingScript implements PaintListener {
         container.submit(walkToBank, bankHandler, teleToUni,
                 walkToUni, attackHandler, lootHandler, teleToBank);
 
-            container.submit(walkToBank);
-            container.submit(bankHandler);
-            container.submit(teleToUni);
-            container.submit(walkToUni);
-            container.submit(attackHandler);
-            container.submit(lootHandler);
-            container.submit(teleToBank);
-
         System.out.println("Starting Loop.");
         me = ctx.players.local();
         System.out.println("Got Local Player.");

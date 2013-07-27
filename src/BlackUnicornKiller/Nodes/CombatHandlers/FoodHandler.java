@@ -16,6 +16,7 @@ public class FoodHandler extends Job {
     }
 
     Actor me;
+    Item food;
 
     public int getHpPercent() {
         return Math.abs(100 - 100 * ctx.widgets.get(748, 5).getHeight() / 28);
@@ -32,11 +33,10 @@ public class FoodHandler extends Job {
     }
 
     public void execute(){
-        for (Item food : ctx.backpack.id(Globals.ID_ITEMS_LOBSTER)){
-            if(food != null){
-                BlackUnicornKiller.status = "Eating food.";
-                food.interact("Eat");
-            }
+        for (Item tempfood : ctx.backpack.id(Globals.ID_ITEMS_LOBSTER)){
+            food=tempfood;
         }
+        BlackUnicornKiller.status = "Eating food.";
+        food.interact("Eat");
     }
 }

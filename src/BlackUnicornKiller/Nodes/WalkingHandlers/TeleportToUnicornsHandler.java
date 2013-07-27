@@ -27,6 +27,10 @@ public class TeleportToUnicornsHandler extends Job {
 
     Actor interacting;
     Actor me;
+
+    GroundItem loot;
+    Item item;
+
     Component wildernessLode;
     Component wildernessLodeClick;
     Component wildernessWarning;
@@ -44,13 +48,11 @@ public class TeleportToUnicornsHandler extends Job {
         actionBar = ctx.widgets.get(1430,7);
         actionBarSpell = ctx.widgets.get(1430,7);
 
-        for (GroundItem loot : ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest()){
-            for(Item item : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){
-                return (me.getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)>=10 && PaceUnicornsHandler.distanceToUnicorns()<=6
-                        && !loot.isValid() &&  item.isValid() && interacting == null);
-            }
-        }
-        return false;
+
+        for(GroundItem tempLoot :  ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest().first()){loot=tempLoot;}
+        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){item=tempItem;}
+        return (me.getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)>=10 && PaceUnicornsHandler.distanceToUnicorns()<=6
+                && !loot.isValid() &&  item.isValid() && interacting == null);
     }
 
 

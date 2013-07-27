@@ -8,11 +8,10 @@ import org.powerbot.script.methods.Hud;
 import org.powerbot.script.util.Delay;
 import org.powerbot.script.util.Random;
 import org.powerbot.script.util.Timer;
+import org.powerbot.script.wrappers.Actor;
 import org.powerbot.script.wrappers.GroundItem;
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.wrappers.Item;
-
-import java.awt.*;
 
 public class LootHandler extends Job {
 
@@ -20,8 +19,9 @@ public class LootHandler extends Job {
         super(ctx);
     }
 
-    Rectangle screen = new Rectangle(1,55,518,258);
-    GroundItem Loot;
+    GroundItem loot;
+    Item extraFood;
+    Actor me;
 
     public void altCameraTurnTo(GroundItem e){
         Timer timeCheck = new Timer(Random.nextInt(2800, 3400));
@@ -47,27 +47,28 @@ public class LootHandler extends Job {
     }
 
     public boolean altIsOnScreen(GroundItem e){
-        for(final Polygon p : e.getModel().getTriangles()){
-            if(screen.contains(p.getBounds())){
-                return true;
-            }
-        }
-        return false;
+        return(e.isOnScreen());
     }
 
+
     public void boneAndCharmClearer(){
-        for (Item bones : ctx.backpack.id(Globals.ID_ITMES_BONES).first()){
+        Item bones;
+        Item charms;
+        for (Item tempBones : ctx.backpack.id(Globals.ID_ITMES_BONES).first()){
+            bones=tempBones;
             bones.interact("Drop");
         }
         for(int i=0; i<=Globals.ID_CHARMS.length-1; i++){
-            for (Item charms : ctx.backpack.id(Globals.ID_CHARMS[i]).first()){
+            for (Item tempCharms : ctx.backpack.id(Globals.ID_CHARMS[i]).first()){
+                charms=tempCharms;
                 charms.interact("Drop");
             }
         }
     }
 
+
     public boolean activate(){
-        Globals.me = ctx.players.local();
+        me = ctx.players.local();
 
         if(!ctx.hud.isOpen(Hud.Window.BACKPACK)){
             ctx.hud.open(Hud.Window.BACKPACK);
@@ -75,22 +76,22 @@ public class LootHandler extends Job {
         boneAndCharmClearer();
         Globals.emergencyTeleport();
 
-        for (GroundItem loot : ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest()){
+        for (GroundItem tempLoot : ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest()){
+            loot=tempLoot;
+        }
 
             if(ctx.backpack.select().count() >= 28){
-                for (Item extraFood : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER)){
+                for (Item tempExtraFood : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER)){
+                    extraFood=tempExtraFood;
                     extraFood.interact("Eat");
                 }
             }
             return(loot != null && ctx.backpack.select().count()>=28);
-        }
-        return false;
     }
 
     public void execute(){
         while(activate()){
             System.out.println("Loot handler");
-            for (GroundItem loot : ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest()){
                 Globals.emergencyTeleport();
 
                 if(loot != null){
@@ -98,12 +99,12 @@ public class LootHandler extends Job {
                         BlackUnicornKiller.status = "Walking towards Loot";
                         ctx.movement.findPath(loot).traverse();
                         BlackUnicornKiller.status = "Turning Camera to Loot";
-                        altCameraTurnTo(Loot);
+                        altCameraTurnTo(loot);
                         if(loot.interact("Take")){
                             invChangeSleep();
                         }
-                        while(Globals.me.isInMotion()){
-                            Globals.me = ctx.players.local();
+                        while(me.isInMotion()){
+                            me = ctx.players.local();
                             Delay.sleep(50,100);
                         }
                     } else {
@@ -111,14 +112,13 @@ public class LootHandler extends Job {
                         if(loot.interact("Take")){
                             invChangeSleep();
                         }
-                        while(Globals.me.isInMotion()){
+                        while(me.isInMotion()){
                             Delay.sleep(50,100);
                         }
                     }
                 }
                 BlackUnicornKiller.actualProfit= BlackUnicornKiller.actualProfit + (Globals.HornPrice);
                 BlackUnicornKiller.postedHorns= BlackUnicornKiller.postedHorns + 1;
-            }
         }
     }
 }

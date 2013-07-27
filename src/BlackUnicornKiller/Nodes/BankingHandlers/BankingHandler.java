@@ -62,12 +62,10 @@ public class BankingHandler extends Job {
 
     }
 
-
+    Item item;
     public boolean activate(){
-        for(Item item : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){
-            return ctx.players.local().getLocation().distanceTo(bankTile)<=8 && item == null;
-        }
-        return false;
+        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){item=tempItem;}
+        return ctx.players.local().getLocation().distanceTo(bankTile)<=8 && item == null;
     }
 
 

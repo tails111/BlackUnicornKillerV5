@@ -1,17 +1,18 @@
 package BlackUnicornKiller.Nodes.CombatHandlers;
 
-import BlackUnicornKiller.Nodes.Globals;
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.util.Delay;
+import org.powerbot.script.wrappers.Actor;
 
 public class ActionBarHandler {
 
     public static void momentumCheck(){
         MethodContext ctx = new MethodContext();
+        Actor me = ctx.players.local();
         if(ctx.settings.get(679)>=1){
             do{
                 Delay.sleep(50, 100);
-            }while(Globals.me.isInCombat());
+            }while(me.isInCombat());
             int x=0;
             do{
                 x++;
@@ -19,7 +20,7 @@ public class ActionBarHandler {
                 if(abilityReady(1)){
                     executeAbility(1);
                 }
-                if(Globals.me.getMessage().matches("Momentum is now active.")){
+                if(me.getMessage().matches("Momentum is now active.")){
                     break;
                 }
             }while(x<=20);

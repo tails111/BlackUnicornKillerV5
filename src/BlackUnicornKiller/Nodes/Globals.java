@@ -51,8 +51,6 @@ public class Globals {
     public static final Tile TILE_LOAD_WILDERNESS = new Tile(3143,3635,0);
     public static final Tile TILE_LOAD_EDGEVILLE = new Tile(3067,3505,0);
 
-    public static Actor me = null;
-
     public static Timer idleCheck = new Timer(45000);
     public static Timer sleeper = new Timer(Random.nextInt(3000000, 3600000));
 
@@ -74,6 +72,7 @@ public class Globals {
 
 
     public static boolean emergencyTeleport(){
+        Actor me = ctx.players.local();
         if(me!=null){
             if(me.getHealthPercent()<=70){
                 Timer timeCheck = new Timer(6000);
@@ -89,7 +88,7 @@ public class Globals {
 
                 Timer timeCheck4 = new Timer(60000);
                 do{
-                    if(!Globals.me.isInCombat()){
+                    if(!me.isInCombat()){
                         if(!ctx.widgets.get(1092,0).isVisible()){
                             ctx.widgets.get(640, 113).click(true);
                             Delay.sleep(750, 1250);

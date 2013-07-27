@@ -11,7 +11,6 @@ import org.powerbot.script.util.Timer;
 import org.powerbot.script.wrappers.Actor;
 import org.powerbot.script.wrappers.Npc;
 
-import java.awt.*;
 
 public class AttackHandler extends Job {
 
@@ -22,10 +21,9 @@ public class AttackHandler extends Job {
     FoodHandler eating = new FoodHandler(ctx);
     PaceUnicornsHandler paceUnicorns = new PaceUnicornsHandler(ctx);
 
-    Rectangle screen = new Rectangle(1,55,518,258);
-
     Actor interacting;
     Actor me;
+    Npc theUnicorn;
 
     public void altCameraTurnTo(Actor e){
         Timer timeCheck = new Timer(Random.nextInt(2800, 3200));
@@ -38,20 +36,13 @@ public class AttackHandler extends Job {
     }
 
     public boolean altIsOnScreen(Actor e){
-        Integer numOfPoints;
-        for(final Polygon p : e.getModel().getTriangles()){
-            numOfPoints = p.xpoints.length + p.ypoints.length;
-            if(screen.contains(p.getBounds()) && numOfPoints>=4){
-                return true;
-            }
-        }
-        return false;
+        return(e.isOnScreen());
     }
 
     public boolean activate(){
         Globals.emergencyTeleport();
 
-        for (Npc theUnicorn : ctx.npcs.id(Globals.ID_NPCS_UNICORNS).nearest()){
+        for (Npc tempUnicorn : ctx.npcs.id(Globals.ID_NPCS_UNICORNS).nearest()){theUnicorn=tempUnicorn;}
             interacting = ctx.players.local().getInteracting();
             me = ctx.players.local();
             if(theUnicorn == null){
@@ -61,8 +52,6 @@ public class AttackHandler extends Job {
             }
             return(theUnicorn != null && interacting==null && theUnicorn.getHealthPercent()!=0
                     && me.getLocation().distanceTo(theUnicorn)<=15 && ctx.backpack.select().count()>=28);
-        }
-        return false;
     }
 
     public void execute(){
@@ -71,35 +60,30 @@ public class AttackHandler extends Job {
 
         ActionBarHandler.momentumCheck();
         Globals.emergencyTeleport();
-        for (Npc theUnicorn : ctx.npcs.id(Globals.ID_NPCS_UNICORNS).nearest()){
-            if(theUnicorn != null){
-                if(me.getLocation().distanceTo(theUnicorn)>=4){
-                    if(!altIsOnScreen(theUnicorn)){
-                        altCameraTurnTo(theUnicorn);
-                    }
-                }
+        if(theUnicorn != null){
+            if(me.getLocation().distanceTo(theUnicorn)>=4){
                 if(!altIsOnScreen(theUnicorn)){
                     altCameraTurnTo(theUnicorn);
                 }
-                if(me.getLocation().distanceTo(theUnicorn)>=8){
-                    ctx.movement.findPath(theUnicorn).traverse();
-                }
-                if(!theUnicorn.interact("Attack")){
-                    ctx.movement.findPath(theUnicorn).traverse();
-                    theUnicorn.interact("Attack");
-                }
-                altCameraTurnTo(theUnicorn);
-                if(!me.isInCombat()){
-                    theUnicorn.interact("Attack");
-                }
-
-
             }
-
-            if(eating.activate()){
-                eating.execute();
+            if(!altIsOnScreen(theUnicorn)){
+                altCameraTurnTo(theUnicorn);
+            }
+            if(me.getLocation().distanceTo(theUnicorn)>=8){
+                ctx.movement.findPath(theUnicorn).traverse();
+            }
+            if(!theUnicorn.interact("Attack")){
+                ctx.movement.findPath(theUnicorn).traverse();
+                theUnicorn.interact("Attack");
+            }
+            altCameraTurnTo(theUnicorn);
+            if(!me.isInCombat()){
+                theUnicorn.interact("Attack");
             }
         }
-    }
 
+        if(eating.activate()){
+            eating.execute();
+        }
+    }
 }

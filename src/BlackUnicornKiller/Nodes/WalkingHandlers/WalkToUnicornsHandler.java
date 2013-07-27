@@ -4,6 +4,7 @@ import BlackUnicornKiller.BlackUnicornKiller;
 import BlackUnicornKiller.Jobs.Job;
 import BlackUnicornKiller.Nodes.Globals;
 import org.powerbot.script.methods.MethodContext;
+import org.powerbot.script.wrappers.Actor;
 import org.powerbot.script.wrappers.Tile;
 
 public class WalkToUnicornsHandler extends Job {
@@ -17,16 +18,16 @@ public class WalkToUnicornsHandler extends Job {
     public static final Tile[] PATH_TO_UNICORNS = new Tile[] {new Tile(3133,3633,0), new Tile(3126,3627,0)};
 
     public boolean activate(){
-        Globals.me = ctx.players.local();
+        Actor me = ctx.players.local();
 
         Globals.emergencyTeleport();
         for(int i=0; i<=Globals.unicornPacePath.length-1; i++){
             distanceToUnicorns = Globals.unicornPacePath[i];
-            if(Globals.me.getLocation().distanceTo(distanceToUnicorns)<=4){
+            if(me.getLocation().distanceTo(distanceToUnicorns)<=4){
                 break;
             }
         }
-        return (Globals.me.getLocation().distanceTo(distanceToUnicorns)>=4 && Globals.me.getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)<=12
+        return (me.getLocation().distanceTo(distanceToUnicorns)>=4 && me.getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)<=12
                 && ctx.backpack.select().count()>=28);
     }
 

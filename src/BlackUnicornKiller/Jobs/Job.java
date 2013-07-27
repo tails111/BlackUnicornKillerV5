@@ -3,8 +3,8 @@ package BlackUnicornKiller.Jobs;
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.methods.MethodProvider;
 
-
 public abstract class Job extends MethodProvider {
+
     public Job(MethodContext ctx) {
         super(ctx);
     }

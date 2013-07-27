@@ -36,8 +36,8 @@ public class PaceUnicornsHandler extends Job {
         MethodContext ctx = new MethodContext();
         for(int i=0; i<=Globals.unicornPacePath.length-1; i++){
             distanceToUnicornsTile = Globals.unicornPacePath[i];
-            if(ctx.players.local().getLocation().distanceTo(distanceToUnicornsTile)<=8){
-                return(ctx.players.local().getLocation().distanceTo(distanceToUnicornsTile));
+            if(ctx.movement.getDistance(ctx.players.local(),distanceToUnicornsTile)<=8){
+                return(ctx.movement.getDistance(ctx.players.local(),distanceToUnicornsTile));
             }
         }
         return 0;
@@ -46,16 +46,16 @@ public class PaceUnicornsHandler extends Job {
     Actor interacting;
     Actor me;
 
+    GroundItem loot;
+    Item item;
+
     public boolean activate(){
         me = ctx.players.local();
         Globals.emergencyTeleport();
-        for (GroundItem loot : ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest()){
-            for(Item item : ctx.backpack.select().id(Globals.ID_ITEMS_FALLYTAB).first()){
-                return(ctx.backpack.select().count()>=28 && me.getHealthPercent()>=25 && distanceToUnicorns()<=10
-                        && interacting == null && !loot.isValid() && item.isValid());
-            }
-        }
-        return false;
+        for(GroundItem tempLoot :  ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest().first()){loot=tempLoot;}
+        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_FALLYTAB).first()){item=tempItem;}
+        return(ctx.backpack.select().count()>=28 && me.getHealthPercent()>=25 && distanceToUnicorns()<=10
+              && interacting == null && !loot.isValid() && item.isValid());
     }
 
     public void execute(){

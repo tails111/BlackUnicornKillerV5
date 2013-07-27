@@ -5,6 +5,7 @@ import BlackUnicornKiller.BlackUnicornKiller;
 import BlackUnicornKiller.Jobs.Job;
 import BlackUnicornKiller.Nodes.Globals;
 import org.powerbot.script.methods.MethodContext;
+import org.powerbot.script.wrappers.Actor;
 import org.powerbot.script.wrappers.Tile;
 
 
@@ -26,9 +27,9 @@ public class WalkToBankHandler extends Job {
 
 
     public boolean activate(){
-        Globals.me = ctx.players.local();
-        return (Globals.me.getLocation().distanceTo(TILE_TELEPORT_AFTER)<=45) && ctx.backpack.select().id(Globals.ID_ITEMS_HORN).count()>=27 &&
-                (Globals.me.getAnimation()==-1 && Globals.me.getLocation().distanceTo(TILE_BANK)>=5);
+        Actor me = ctx.players.local();
+        return (me.getLocation().distanceTo(TILE_TELEPORT_AFTER)<=45) && ctx.backpack.select().id(Globals.ID_ITEMS_HORN).count()>=27 &&
+                (me.getAnimation()==-1 && me.getLocation().distanceTo(TILE_BANK)>=5);
     }
 
 

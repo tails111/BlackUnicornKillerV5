@@ -3,7 +3,8 @@ package BlackUnicornKiller.Nodes.WalkingHandlers;
 import BlackUnicornKiller.BlackUnicornKiller;
 import BlackUnicornKiller.Jobs.Job;
 import BlackUnicornKiller.Nodes.Globals;
-import BlackUnicornKiller.Nodes.Area;
+
+import org.powerbot.script.wrappers.Area;
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.util.Delay;
 import org.powerbot.script.util.Timer;
@@ -25,7 +26,7 @@ public class TeleportToBankHandler extends Job {
         me = ctx.players.local();
 
         Globals.emergencyTeleport();
-        return !edgeville.contains(Globals.me.getLocation()) &&
+        return !edgeville.contains(me.getLocation()) &&
                 me.getAnimation() == -1 && ctx.backpack.select().id(Globals.ID_ITEMS_HORN).count()>=27;
     }
 
@@ -42,7 +43,7 @@ public class TeleportToBankHandler extends Job {
 
         ctx.movement.findPath(Globals.TILE_LOAD_WILDERNESS).traverse();
 
-        if(me.getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)<=14 && !Globals.me.isInCombat()){
+        if(me.getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)<=14 && !me.isInCombat()){
             if(!ctx.widgets.get(1092,0).isVisible()){
                 ctx.widgets.get(640,113).click(true);
                 Delay.sleep(750,1250);
