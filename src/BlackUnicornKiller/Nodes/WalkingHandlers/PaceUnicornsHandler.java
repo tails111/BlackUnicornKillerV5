@@ -32,8 +32,7 @@ public class PaceUnicornsHandler extends Job {
 
     public static char placement = 'B';
 
-    public static double distanceToUnicorns(){
-        MethodContext ctx = new MethodContext();
+    public double distanceToUnicorns(){
         for(int i=0; i<=Globals.unicornPacePath.length-1; i++){
             distanceToUnicornsTile = Globals.unicornPacePath[i];
             if(ctx.movement.getDistance(ctx.players.local(),distanceToUnicornsTile)<=8){

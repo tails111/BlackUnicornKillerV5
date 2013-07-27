@@ -7,10 +7,7 @@ import BlackUnicornKiller.Nodes.Globals;
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.util.Delay;
 import org.powerbot.script.util.Timer;
-import org.powerbot.script.wrappers.Actor;
-import org.powerbot.script.wrappers.Component;
-import org.powerbot.script.wrappers.GroundItem;
-import org.powerbot.script.wrappers.Item;
+import org.powerbot.script.wrappers.*;
 
 
 public class TeleportToUnicornsHandler extends Job {
@@ -38,6 +35,17 @@ public class TeleportToUnicornsHandler extends Job {
     Component actionBar;
     Component actionBarSpell;
 
+    private double distanceToUnicorns(){
+    Tile distanceToUnicornsTile;
+    for(int i=0; i<=Globals.unicornPacePath.length-1; i++){
+        distanceToUnicornsTile = Globals.unicornPacePath[i];
+        if(ctx.movement.getDistance(ctx.players.local(),distanceToUnicornsTile)<=8){
+            return(ctx.movement.getDistance(ctx.players.local(),distanceToUnicornsTile));
+        }
+    }
+    return 0;
+    }
+
 
     public boolean activate(){
         me = ctx.players.local();
@@ -48,21 +56,24 @@ public class TeleportToUnicornsHandler extends Job {
         actionBar = ctx.widgets.get(1430,7);
         actionBarSpell = ctx.widgets.get(1430,7);
 
-
         for(GroundItem tempLoot :  ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest().first()){loot=tempLoot;}
         for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){item=tempItem;}
-        return (me.getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)>=10 && PaceUnicornsHandler.distanceToUnicorns()<=6
+        System.out.println("get Distance: " + ctx.movement.getDistance(Globals.TILE_LOAD_WILDERNESS, ctx.players.local()));
+        System.out.println("Distance To Unicorns: " + distanceToUnicorns());
+        return (ctx.movement.getDistance(Globals.TILE_LOAD_WILDERNESS, ctx.players.local())<=10 && distanceToUnicorns()<=6
                 && !loot.isValid() &&  item.isValid() && interacting == null);
+       // return true;
     }
 
 
     public void execute(){
         BlackUnicornKiller.status = "Homeporting to Wilderness.";
 
+        System.out.println("TeleportToUnicorns Activated.");
 
         //Wilderness load click  to warning
         if(wildernessLode.isVisible()){
-            wildernessLode.click(true);
+            wildernessLodeClick.click(true);
             Timer timeCheck = new Timer(2000);
             do{
                 Delay.sleep(30,50);

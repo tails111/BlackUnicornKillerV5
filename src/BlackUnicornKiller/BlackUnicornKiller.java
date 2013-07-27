@@ -137,14 +137,10 @@ public class BlackUnicornKiller extends PollingScript implements PaintListener {
         System.out.println("Got interacting.");
 
 		job = container.get();
-        System.out.println("Got Job: " + container.get());
         if(job != null){
-            System.out.println("Job != null.");
-		    if (job.activate()) {
             System.out.println("job started: " + container.get());
 			job.execute();
 			return job.delay();
-		    }
         }
 
         container.clear();
