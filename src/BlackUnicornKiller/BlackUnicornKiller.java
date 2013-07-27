@@ -32,8 +32,8 @@ public class BlackUnicornKiller extends PollingScript implements PaintListener {
 
 	@Override
 	public void start() {
-		
-		Globals.setContext(ctx);
+
+        Globals.setContext(ctx);
 
         System.out.println("Starting Script.");
 		
@@ -115,26 +115,10 @@ public class BlackUnicornKiller extends PollingScript implements PaintListener {
 	}
 
     Job job = null;
-    WalkToBankHandler walkToBank = new WalkToBankHandler(ctx);
-    BankingHandler bankHandler = new BankingHandler(ctx);
-    TeleportToUnicornsHandler teleToUni = new TeleportToUnicornsHandler(ctx);
-    WalkToUnicornsHandler walkToUni = new WalkToUnicornsHandler(ctx);
-    AttackHandler attackHandler = new AttackHandler(ctx);
-    LootHandler lootHandler = new LootHandler(ctx);
-    TeleportToBankHandler teleToBank = new TeleportToBankHandler(ctx);
-
 	@Override
 	public int poll(){
-        System.out.println("Submitting jobs.");
-
-        container.submit(walkToBank, bankHandler, teleToUni,
-                walkToUni, attackHandler, lootHandler, teleToBank);
-
-        System.out.println("Starting Loop.");
         me = ctx.players.local();
-        System.out.println("Got Local Player.");
 		interacting = me.getInteracting();
-        System.out.println("Got interacting.");
 
 		job = container.get();
         if(job != null){
@@ -143,7 +127,6 @@ public class BlackUnicornKiller extends PollingScript implements PaintListener {
 			return job.delay();
         }
 
-        container.clear();
 		return(Random.nextInt(650, 800));
 	}
 

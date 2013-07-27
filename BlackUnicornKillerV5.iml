@@ -9,6 +9,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="RSBot-5000" level="project" />
+    <orderEntry type="library" name="RSBot-5001" level="project" />
   </component>
 </module>
 

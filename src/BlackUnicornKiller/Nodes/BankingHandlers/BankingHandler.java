@@ -7,9 +7,7 @@ import org.powerbot.script.methods.*;
 import org.powerbot.script.util.Delay;
 import org.powerbot.script.util.Random;
 import org.powerbot.script.util.Timer;
-import org.powerbot.script.wrappers.GameObject;
-import org.powerbot.script.wrappers.Item;
-import org.powerbot.script.wrappers.Tile;
+import org.powerbot.script.wrappers.*;
 
 public class BankingHandler extends Job {
 
@@ -18,6 +16,7 @@ public class BankingHandler extends Job {
     }
 
     private Tile bankTile = new Tile(3093,3494,0);
+    public Item nilItem = ctx.backpack.getNil();
 
     public boolean invChangeSleep(){
         Timer timeCheck = new Timer(Random.nextInt(1200, 1600));
@@ -62,12 +61,18 @@ public class BankingHandler extends Job {
 
     }
 
-    Item item;
-    public boolean activate(){
-        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){item=tempItem;}
-        return ctx.players.local().getLocation().distanceTo(bankTile)<=8 && item == null;
+    private Item checkItem(Item tItem){
+        if(tItem==null){
+            return ctx.backpack.getNil();
+        }
+        return tItem;
     }
 
+    Item item;
+    public boolean activate(){
+        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){item=checkItem(tempItem);}
+        return ctx.players.local().getLocation().distanceTo(bankTile)<=8 && item == nilItem;
+    }
 
     public void execute(){
 

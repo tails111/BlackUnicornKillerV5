@@ -35,34 +35,53 @@ public class TeleportToUnicornsHandler extends Job {
     Component actionBar;
     Component actionBarSpell;
 
+    public Item nilItem = ctx.backpack.getNil();
+    public GroundItem nilGround = ctx.groundItems.getNil();
+
     private double distanceToUnicorns(){
     Tile distanceToUnicornsTile;
     for(int i=0; i<=Globals.unicornPacePath.length-1; i++){
         distanceToUnicornsTile = Globals.unicornPacePath[i];
-        if(ctx.movement.getDistance(ctx.players.local(),distanceToUnicornsTile)<=8){
-            return(ctx.movement.getDistance(ctx.players.local(),distanceToUnicornsTile));
+        if(ctx.players.local().getLocation().distanceTo(distanceToUnicornsTile)>=8){
+            return(ctx.players.local().getLocation().distanceTo(distanceToUnicornsTile));
         }
     }
     return 0;
     }
 
+    private GroundItem checkGround(GroundItem tGround){
+        if(tGround==null){
+            return ctx.groundItems.getNil();
+        }
+        return tGround;
+
+    }
+
+    private Item checkItem(Item tItem){
+        if(tItem==null){
+            return ctx.backpack.getNil();
+        }
+            return tItem;
+    }
 
     public boolean activate(){
         me = ctx.players.local();
+        interacting = me.getInteracting();
         wildernessLode = ctx.widgets.get(1092,0);
         wildernessLodeClick = ctx.widgets.get(1092,59);
         wildernessWarning = ctx.widgets.get(1186,7);
-        wildernessChat = ctx.widgets.get(1188,3);
+        wildernessChat = ctx.widgets.get(1188,11);
         actionBar = ctx.widgets.get(1430,7);
         actionBarSpell = ctx.widgets.get(1430,7);
 
-        for(GroundItem tempLoot :  ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest().first()){loot=tempLoot;}
-        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){item=tempItem;}
-        System.out.println("get Distance: " + ctx.movement.getDistance(Globals.TILE_LOAD_WILDERNESS, ctx.players.local()));
-        System.out.println("Distance To Unicorns: " + distanceToUnicorns());
-        return (ctx.movement.getDistance(Globals.TILE_LOAD_WILDERNESS, ctx.players.local())<=10 && distanceToUnicorns()<=6
-                && !loot.isValid() &&  item.isValid() && interacting == null);
-       // return true;
+        for(GroundItem tempLoot :  ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest().first()){loot=checkGround(tempLoot);}
+        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){item=checkItem(tempItem);}
+        System.out.println("Players get loc: " + ctx.players.local().getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS));
+        return (ctx.players.local().getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)>=10
+                && distanceToUnicorns()>=6
+                && loot == nilGround
+                && item != nilItem
+                && interacting == null);
     }
 
 
@@ -95,7 +114,7 @@ public class TeleportToUnicornsHandler extends Job {
 
         //Yes to Wilderness
         if(wildernessChat != null && wildernessChat.isVisible()){
-            if(wildernessChat.getText().contains("Yes")){
+            if(wildernessChat.getText().contains("Yes.")){
                 wildernessChat.click(true);
             }
             Timer timeCheck3 = new Timer(20000);
