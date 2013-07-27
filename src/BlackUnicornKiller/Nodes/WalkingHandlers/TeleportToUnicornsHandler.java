@@ -89,7 +89,6 @@ public class TeleportToUnicornsHandler extends Job {
         System.out.println("--------------------------------------");
         return (ctx.players.local().getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)>=10
                 && distanceToUnicorns()>=6
-                && loot!=null && !loot.getName().equals("Unicorn Horn")
                 && itemLobby != nilItem
                 && itemHorn == null
                 && interacting==null

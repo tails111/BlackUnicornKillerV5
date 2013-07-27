@@ -168,12 +168,12 @@ public class LootHandler extends Job {
     public void execute(){
             System.out.println("Loot handler ACTIVATED.");
             emergencyTeleport();
-            for (GroundItem tempLoot : ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest()){loot=checkGround(tempLoot);}
+          //  for (GroundItem tempLoot : ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest().first()){loot=checkGround(tempLoot);}
             me=ctx.players.local();
                 if(loot != nilGround || loot != null){
-                    if(!altIsOnScreen(loot)){
+                    if(me.getLocation().distanceTo(loot)>=10){
                         BlackUnicornKiller.status = "Walking towards Loot";
-                        ctx.movement.findPath(loot).traverse();
+                        ctx.movement.stepTowards(loot);
                         while(me.isInMotion()){
                             me = ctx.players.local();
                             Delay.sleep(50,100);

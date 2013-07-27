@@ -31,6 +31,7 @@ public class PaceUnicornsHandler extends Job {
     public static Tile startTile = new Tile(3116,3601,0);
 
     public static Tile distanceToUnicornsTile;
+    private Tile bankTile = new Tile(3093,3494,0);
 
     public static char placement = 'B';
 
@@ -144,7 +145,8 @@ public class PaceUnicornsHandler extends Job {
         System.out.println("--------------------------------------");
         return(ctx.backpack.select().count()<=27 && me.getHealthPercent()>=75 && distanceToUnicorns()<=10
             && interacting == null && !loot.getName().equals("Unicorn Horn") && item!=nilItem
-            && !lootCheck.activate() && theUnicorn==nilNpc); //&& !attackCheck.activate());
+            && !lootCheck.activate() && theUnicorn==nilNpc
+            && ctx.players.local().getLocation().distanceTo(bankTile)>=8); //&& !attackCheck.activate());
     }
 
     public void execute(){
