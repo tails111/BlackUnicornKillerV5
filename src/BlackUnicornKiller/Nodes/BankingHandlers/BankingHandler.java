@@ -33,7 +33,6 @@ public class BankingHandler extends Job {
 
     public boolean toggleBank(boolean open){
         for (GameObject bankBooth : ctx.objects.select().id(Globals.ID_BANK_BOOTH).nearest().first()){
-            bankBooth.interact("Open");
             if(open){
                 if(!ctx.bank.isOpen()){
                     BlackUnicornKiller.status = "Opening bank booth.";
@@ -68,13 +67,19 @@ public class BankingHandler extends Job {
         return tItem;
     }
 
-    Item item;
+    Item item = nilItem;
     public boolean activate(){
-        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){item=checkItem(tempItem);}
+        item=nilItem;
+        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER)){item=checkItem(tempItem);}
+        System.out.println("---Bank handler Activate----");
+        System.out.println("Dis to Bank <= 8: " + (ctx.players.local().getLocation().distanceTo(bankTile)<=8));
+        System.out.println("item==nilItem : " + (item==nilItem));
+        System.out.println("--------------------------------------");
         return ctx.players.local().getLocation().distanceTo(bankTile)<=8 && item == nilItem;
     }
 
     public void execute(){
+        System.out.println("Banking ACTIVATED.");
 
         if(toggleBank(true)){
             BlackUnicornKiller.status = "Depositing inventory.";
@@ -92,7 +97,10 @@ public class BankingHandler extends Job {
            //         invChangeSleep();
            //     }
           //  }
-            toggleBank(false);
+            Timer timeCheck = new Timer(Random.nextInt(3000,5000));
+            do{
+                toggleBank(false);
+            }while(ctx.bank.isOpen() && timeCheck.isRunning());
         }
         //   Globals.scriptSleeper();
     }

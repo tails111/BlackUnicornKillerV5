@@ -74,13 +74,20 @@ public class WalkToUnicornsHandler extends Job {
                 break;
             }
         }
-        System.out.println(me.getLocation().distanceTo(distanceToUnicorns));
+        System.out.println("---Walk to UNi handler Activate----");
+        System.out.println("get loc dis to Uni >= 4: " + (me.getLocation().distanceTo(distanceToUnicorns)>=4));
+        System.out.println("get loc dis to Wild Tile <= 12:  " + (me.getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)<=12));
+        System.out.println("Inventory count <= 28 : " + (ctx.backpack.count()<=28));
+        System.out.println("Inventory count: " + ctx.backpack.count());
+        System.out.println("Inv count w/ sel: " + ctx.backpack.select().count());
+        System.out.println("--------------------------------------");
         return (me.getLocation().distanceTo(distanceToUnicorns)>=4 && me.getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)<=12
-                && ctx.backpack.select().count()>=28);
+                && ctx.backpack.select().count()<=27);
     }
 
     public void execute(){
         BlackUnicornKiller.status = "Walking to Unicorns.";
+        System.out.println("Walk to Uni ACTIVATED.");
         ctx.movement.newTilePath(PATH_TO_UNICORNS).traverse();
     }
 

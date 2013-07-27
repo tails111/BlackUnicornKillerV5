@@ -12,6 +12,7 @@ import org.powerbot.script.wrappers.Actor;
 import org.powerbot.script.wrappers.GroundItem;
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.wrappers.Item;
+import org.powerbot.script.wrappers.Tile;
 
 public class LootHandler extends Job {
 
@@ -24,6 +25,8 @@ public class LootHandler extends Job {
     Actor me;
 
     public GroundItem nilGround = ctx.groundItems.getNil();
+    public Item nilItem = ctx.backpack.getNil();
+
 
     private GroundItem checkGround(GroundItem tGround){
         if(tGround==null){
@@ -63,7 +66,7 @@ public class LootHandler extends Job {
     }
 
     public boolean altIsOnScreen(GroundItem e){
-        return(e.isOnScreen());
+        return(e!=null && e.isOnScreen());
     }
 
 
@@ -125,6 +128,17 @@ public class LootHandler extends Job {
         return false;
     }
 
+    public boolean closeToUnicorns(){
+        Tile distanceToUnicornsTile;
+        for(int i=0; i<=Globals.unicornPacePath.length-1; i++){
+            distanceToUnicornsTile = Globals.unicornPacePath[i];
+            if(ctx.players.local().getLocation().distanceTo(distanceToUnicornsTile)<=18){
+                return(ctx.players.local().getLocation().distanceTo(distanceToUnicornsTile)<=18);
+            }
+        }
+        return false;
+    }
+
 
     public boolean activate(){
         me = ctx.players.local();
@@ -135,26 +149,35 @@ public class LootHandler extends Job {
         boneAndCharmClearer();
         emergencyTeleport();
 
-        for (GroundItem tempLoot : ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest()){loot=checkGround(tempLoot);}
+        for (GroundItem tempLoot : ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest().first()){loot=checkGround(tempLoot);}
 
-            if(ctx.backpack.select().count() >= 28){
+            if(ctx.backpack.select().count() >= 27){
                 for (Item tempExtraFood : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER)){extraFood=checkItem(tempExtraFood);}
-                if(extraFood.isValid()){
+                if(extraFood!=nilItem && extraFood!=null){
                     extraFood.interact("Eat");
                 }
             }
-            return(loot != nilGround && ctx.backpack.select().count()>=28);
+        System.out.println("---Loot handler Activate----");
+        System.out.println("Inv count <=28: " + (ctx.backpack.select().count()<=27));
+        System.out.println("Loot!=nilGround : " + (loot!=nilGround));
+        System.out.println("Close to Unis: " + closeToUnicorns());
+        System.out.println("--------------------------------------");
+        return(loot != nilGround && loot != null && ctx.backpack.select().count()<=27 && closeToUnicorns());
     }
 
     public void execute(){
-        while(activate()){
-            System.out.println("Loot handler");
-                emergencyTeleport();
-
-                if(loot != nilGround){
+            System.out.println("Loot handler ACTIVATED.");
+            emergencyTeleport();
+            for (GroundItem tempLoot : ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest()){loot=checkGround(tempLoot);}
+            me=ctx.players.local();
+                if(loot != nilGround || loot != null){
                     if(!altIsOnScreen(loot)){
                         BlackUnicornKiller.status = "Walking towards Loot";
                         ctx.movement.findPath(loot).traverse();
+                        while(me.isInMotion()){
+                            me = ctx.players.local();
+                            Delay.sleep(50,100);
+                        }
                         BlackUnicornKiller.status = "Turning Camera to Loot";
                         altCameraTurnTo(loot);
                         if(loot.interact("Take")){
@@ -174,8 +197,9 @@ public class LootHandler extends Job {
                         }
                     }
                 }
-                BlackUnicornKiller.actualProfit= BlackUnicornKiller.actualProfit + (Globals.HornPrice);
+        loot=nilGround;
+
+        BlackUnicornKiller.actualProfit= BlackUnicornKiller.actualProfit + (Globals.HornPrice);
                 BlackUnicornKiller.postedHorns= BlackUnicornKiller.postedHorns + 1;
-        }
     }
 }

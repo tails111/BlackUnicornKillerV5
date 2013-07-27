@@ -5,6 +5,7 @@ import BlackUnicornKiller.BlackUnicornKiller;
 import BlackUnicornKiller.Jobs.Job;
 import BlackUnicornKiller.Nodes.Globals;
 import org.powerbot.script.methods.MethodContext;
+import org.powerbot.script.wrappers.Area;
 import org.powerbot.script.util.Delay;
 import org.powerbot.script.util.Timer;
 import org.powerbot.script.wrappers.*;
@@ -26,7 +27,8 @@ public class TeleportToUnicornsHandler extends Job {
     Actor me;
 
     GroundItem loot;
-    Item item;
+    Item itemLobby;
+    Item itemHorn;
 
     Component wildernessLode;
     Component wildernessLodeClick;
@@ -35,8 +37,9 @@ public class TeleportToUnicornsHandler extends Job {
     Component actionBar;
     Component actionBarSpell;
 
+    final Area edgeville = new Area(new Tile(3063,3509,0), new Tile(3100,3486,0));
+
     public Item nilItem = ctx.backpack.getNil();
-    public GroundItem nilGround = ctx.groundItems.getNil();
 
     private double distanceToUnicorns(){
     Tile distanceToUnicornsTile;
@@ -74,21 +77,30 @@ public class TeleportToUnicornsHandler extends Job {
         actionBar = ctx.widgets.get(1430,7);
         actionBarSpell = ctx.widgets.get(1430,7);
 
-        for(GroundItem tempLoot :  ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest().first()){loot=checkGround(tempLoot);}
-        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){item=checkItem(tempItem);}
+        for(GroundItem tempLoot :  ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).select().nearest().first()){loot=checkGround(tempLoot);}
+        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_LOBSTER).first()){itemLobby=checkItem(tempItem);}
+        for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_HORN).first()){itemHorn=checkItem(tempItem);}
+        System.out.println("---Tele to uni handler Activate----");
         System.out.println("Players get loc: " + ctx.players.local().getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS));
+        System.out.println("DistanceToUni >= 6 " + (distanceToUnicorns()>=6));
+        System.out.println("!loot.getName().equals(Unicorn Horn)) : " + (!loot.getName().equals("Unicorn Horn")));
+        System.out.println("itemLobby!=nilItem : " + (itemLobby!=nilItem));
+        System.out.println("itemHorn==nilItem : " + (itemHorn==null));
+        System.out.println("--------------------------------------");
         return (ctx.players.local().getLocation().distanceTo(Globals.TILE_LOAD_WILDERNESS)>=10
                 && distanceToUnicorns()>=6
-                && loot == nilGround
-                && item != nilItem
-                && interacting == null);
+                && loot!=null && !loot.getName().equals("Unicorn Horn")
+                && itemLobby != nilItem
+                && itemHorn == null
+                && interacting==null
+                && edgeville.contains(me));
     }
 
 
     public void execute(){
         BlackUnicornKiller.status = "Homeporting to Wilderness.";
 
-        System.out.println("TeleportToUnicorns Activated.");
+        System.out.println("TeleportToUnicorns ACTIVATED.");
 
         //Wilderness load click  to warning
         if(wildernessLode.isVisible()){

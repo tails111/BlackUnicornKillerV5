@@ -12,6 +12,7 @@ import org.powerbot.script.util.Timer;
 import org.powerbot.script.wrappers.Actor;
 import org.powerbot.script.wrappers.Item;
 import org.powerbot.script.wrappers.Npc;
+import org.powerbot.script.wrappers.Tile;
 
 
 public class AttackHandler extends Job {
@@ -23,11 +24,10 @@ public class AttackHandler extends Job {
     FoodHandler eating = new FoodHandler(ctx);
     PaceUnicornsHandler paceUnicorns = new PaceUnicornsHandler(ctx);
 
-    Actor interacting;
     Actor me;
     Npc theUnicorn;
 
-    public Npc nilNpc = ctx.npcs.getNil();
+    private Npc nilNpc = ctx.npcs.getNil();
 
     public void altCameraTurnTo(Actor e){
         Timer timeCheck = new Timer(Random.nextInt(2800, 3200));
@@ -48,7 +48,17 @@ public class AttackHandler extends Job {
             return ctx.npcs.getNil();
         }
         return tNpc;
+    }
 
+    public boolean closeToUnicorns(){
+        Tile distanceToUnicornsTile;
+        for(int i=0; i<=Globals.unicornPacePath.length-1; i++){
+            distanceToUnicornsTile = Globals.unicornPacePath[i];
+            if(ctx.players.local().getLocation().distanceTo(distanceToUnicornsTile)<=18){
+                return(ctx.players.local().getLocation().distanceTo(distanceToUnicornsTile)<=18);
+            }
+        }
+        return false;
     }
 
     public boolean emergencyTeleport(){
@@ -98,26 +108,28 @@ public class AttackHandler extends Job {
         emergencyTeleport();
 
         theUnicorn = nilNpc;
-        for (Npc tempUnicorn : ctx.npcs.id(Globals.ID_NPCS_UNICORNS).nearest()){theUnicorn=checkNPC(tempUnicorn);}
+        for (Npc tempUnicorn : ctx.npcs.select().id(Globals.ID_NPCS_UNICORNS).nearest().first()){theUnicorn=checkNPC(tempUnicorn);}
         me = ctx.players.local();
-        interacting = me.getInteracting();
-
-            if(theUnicorn == nilNpc){
-                if(paceUnicorns.activate()){
-                    paceUnicorns.execute();
-                }
-            }
-            return(theUnicorn != nilNpc
-                    && interacting==null
-                    && theUnicorn.getHealthPercent()!=0
-                    && me.getLocation().distanceTo(theUnicorn)<=15 && ctx.backpack.select().count()>=28);
+        //    if(theUnicorn == nilNpc || theUnicorn ==null){
+        //        if(paceUnicorns.activate()){
+        //            paceUnicorns.execute();
+        //        }
+        //    }
+        System.out.println("---Attack handler Activate----");
+        System.out.println("Inv Count <= 27: " + (ctx.backpack.select().count()<=27));
+        System.out.println("ClosetoUni: " +  (closeToUnicorns()));
+        System.out.println("theUnicorn.getHealthPercent()!=0 : " + (theUnicorn.getHealthPercent()!=0));
+        System.out.println("ctx.backpack.select().count()<=27: " + (ctx.backpack.select().count()<=27));
+        System.out.println("--------------------------------------");
+            return(theUnicorn != nilNpc && theUnicorn.getHealthPercent()!=0 && closeToUnicorns()
+                    && ctx.backpack.select().count()<=27 && me.getInteracting()==null);
     }
 
     public void execute(){
-        System.out.println("Attack handler");
+        System.out.println("Attack handler ACTIVATED.");
         BlackUnicornKiller.status="Attacking Unicorn.";
-
-        ActionBarHandler.momentumCheck();
+        me=ctx.players.local();
+       // ActionBarHandler.momentumCheck();
         emergencyTeleport();
         if(theUnicorn != nilNpc){
             if(me.getLocation().distanceTo(theUnicorn)>=4){
@@ -144,5 +156,6 @@ public class AttackHandler extends Job {
         if(eating.activate()){
             eating.execute();
         }
+        theUnicorn=nilNpc;
     }
 }

@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 
+import BlackUnicornKiller.Nodes.WalkingHandlers.*;
 import org.powerbot.event.PaintListener;
 import org.powerbot.script.Manifest;
 import org.powerbot.script.PollingScript;
@@ -20,10 +21,6 @@ import BlackUnicornKiller.Nodes.Globals;
 import BlackUnicornKiller.Nodes.BankingHandlers.BankingHandler;
 import BlackUnicornKiller.Nodes.CombatHandlers.AttackHandler;
 import BlackUnicornKiller.Nodes.CombatHandlers.LootHandler;
-import BlackUnicornKiller.Nodes.WalkingHandlers.TeleportToBankHandler;
-import BlackUnicornKiller.Nodes.WalkingHandlers.TeleportToUnicornsHandler;
-import BlackUnicornKiller.Nodes.WalkingHandlers.WalkToBankHandler;
-import BlackUnicornKiller.Nodes.WalkingHandlers.WalkToUnicornsHandler;
 
 @Manifest(name = "Black Unicorn Killer", authors = "tails111", description = "Kills Black Unicorns, and collects horns.", version = 1.0, hidden = true)
 public class BlackUnicornKiller extends PollingScript implements PaintListener {
@@ -40,7 +37,8 @@ public class BlackUnicornKiller extends PollingScript implements PaintListener {
 		me = ctx.players.local();
 		interacting = me.getInteracting();
 		container.submit(new WalkToBankHandler(ctx), new BankingHandler(ctx), new TeleportToUnicornsHandler(ctx),
-				new WalkToUnicornsHandler(ctx), new AttackHandler(ctx), new LootHandler(ctx), new TeleportToBankHandler(ctx));
+				new WalkToUnicornsHandler(ctx), new AttackHandler(ctx), new LootHandler(ctx), new TeleportToBankHandler(ctx),
+                new PaceUnicornsHandler(ctx));
 	}
 
 	public long startTime = System.currentTimeMillis();

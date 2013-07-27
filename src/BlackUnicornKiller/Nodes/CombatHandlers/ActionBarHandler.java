@@ -6,26 +6,26 @@ import org.powerbot.script.wrappers.Actor;
 
 public class ActionBarHandler {
 
-    public static void momentumCheck(){
-        MethodContext ctx = new MethodContext();
-        Actor me = ctx.players.local();
-        if(ctx.settings.get(679)>=1){
-            do{
-                Delay.sleep(50, 100);
-            }while(me.isInCombat());
-            int x=0;
-            do{
-                x++;
-                Delay.sleep(400,600);
-                if(abilityReady(1)){
-                    executeAbility(1);
-                }
-                if(me.getMessage().matches("Momentum is now active.")){
-                    break;
-                }
-            }while(x<=20);
-        }
-    }
+   // public static void momentumCheck(){
+   //     MethodContext ctx = new MethodContext();
+   //     Actor me = ctx.players.local();
+   //     if(ctx.settings.get(679)>=1){
+   //         do{
+   //             Delay.sleep(50, 100);
+   //         }while(me.isInCombat());
+   //         int x=0;
+   //         do{
+   //             x++;
+   //             Delay.sleep(400,600);
+   //             if(abilityReady(1)){
+    //                executeAbility(1);
+    //            }
+    //            if(me.getMessage().matches("Momentum is now active.")){
+    //                break;
+    //            }
+     //       }while(x<=20);
+     //   }
+    //}
 
     public static boolean abilityReady(int slotNum){
         MethodContext ctx = new MethodContext();

@@ -83,12 +83,16 @@ public class FoodHandler extends Job {
         }
         for (Item tempFood : ctx.backpack.id(Globals.ID_ITEMS_LOBSTER)){food=checkItem(tempFood);}
         emergencyTeleport();
-        return (me.isValid() && getHpPercent()<=50
-                && food != nilItem);
+        System.out.println("---Food handler Activate----");
+        System.out.println("getHpPercent()<=50: " + (getHpPercent()<=50));
+        System.out.println("Loot==nilGround : " + (food==nilItem));
+        System.out.println("--------------------------------------");
+        return (getHpPercent()<=50 && food != nilItem);
     }
 
     public void execute(){
         BlackUnicornKiller.status = "Eating food.";
+        System.out.println("Food ACTIVATED.");
         food.interact("Eat");
     }
 }

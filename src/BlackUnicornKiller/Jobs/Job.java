@@ -11,7 +11,7 @@ public abstract class Job extends MethodProvider {
 
     /* override this to extend the sleep time */
     public int delay() {
-        return 250;
+        return 200;
     }
 
     /* returns the priority of the job. higher priority = executed first */

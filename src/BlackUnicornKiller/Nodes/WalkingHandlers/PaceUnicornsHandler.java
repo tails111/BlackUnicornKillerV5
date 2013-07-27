@@ -2,6 +2,8 @@ package BlackUnicornKiller.Nodes.WalkingHandlers;
 
 import BlackUnicornKiller.BlackUnicornKiller;
 import BlackUnicornKiller.Jobs.Job;
+import BlackUnicornKiller.Nodes.CombatHandlers.AttackHandler;
+import BlackUnicornKiller.Nodes.CombatHandlers.LootHandler;
 import BlackUnicornKiller.Nodes.Globals;
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.util.Delay;
@@ -35,7 +37,7 @@ public class PaceUnicornsHandler extends Job {
     public double distanceToUnicorns(){
         for(int i=0; i<=Globals.unicornPacePath.length-1; i++){
             distanceToUnicornsTile = Globals.unicornPacePath[i];
-            if(ctx.movement.getDistance(ctx.players.local(),distanceToUnicornsTile)<=8){
+            if(ctx.movement.getDistance(ctx.players.local(),distanceToUnicornsTile)<=10){
                 return(ctx.movement.getDistance(ctx.players.local(),distanceToUnicornsTile));
             }
         }
@@ -45,16 +47,30 @@ public class PaceUnicornsHandler extends Job {
     Actor interacting;
     Actor me;
 
-    GroundItem loot;
-    Item item;
-
     public Item nilItem = ctx.backpack.getNil();
+    public GroundItem nilGround = ctx.groundItems.getNil();
+    public Npc nilNpc = ctx.npcs.getNil();
+
+    GroundItem loot = nilGround;
+    Item item=nilItem;
+    Npc theUnicorn = nilNpc;
+
+
+    LootHandler lootCheck = new LootHandler(ctx);
+   // AttackHandler attackCheck = new AttackHandler(ctx);
 
     private GroundItem checkGround(GroundItem tGround){
         if(tGround==null){
             return ctx.groundItems.getNil();
         }
         return tGround;
+    }
+
+    private Npc checkNPC(Npc tNpc){
+        if(tNpc==null){
+            return ctx.npcs.getNil();
+        }
+        return tNpc;
     }
 
     public boolean emergencyTeleport(){
@@ -111,15 +127,30 @@ public class PaceUnicornsHandler extends Job {
         me = ctx.players.local();
         interacting = me.getInteracting();
         emergencyTeleport();
+
+        theUnicorn=nilNpc;
+        for (Npc tempUnicorn : ctx.npcs.select().id(Globals.ID_NPCS_UNICORNS).nearest().first()){theUnicorn=checkNPC(tempUnicorn);}
         for(GroundItem tempLoot :  ctx.groundItems.select().id(Globals.ID_ITEMS_HORN).nearest().first()){loot=checkGround(tempLoot);}
         for(Item tempItem : ctx.backpack.select().id(Globals.ID_ITEMS_FALLYTAB).first()){item=checkItem(tempItem);}
-        return(ctx.backpack.select().count()>=28 && me.getHealthPercent()>=25 && distanceToUnicorns()<=10
-              && interacting == null && !loot.isValid() && item!=nilItem);
+        System.out.println("---Pace Uni handler Activate----");
+        System.out.println("Inv Count <= 27: " + (ctx.backpack.select().count()<=27));
+        System.out.println("Me Health >= 25:  " + (me.getHealthPercent()>=75));
+        System.out.println("Dis To Uni <=10: " + (distanceToUnicorns()<=10));
+        System.out.println("interacting==null : " + (interacting == null));
+        System.out.println("loot==nilGround : " + (loot==nilGround));
+        System.out.println("item!=nilItem : " + (item!=nilItem));
+        System.out.println("theUnicorn.name: " + theUnicorn.getName());
+        System.out.println("theUnicorn==nil: " + (theUnicorn==nilNpc));
+        System.out.println("--------------------------------------");
+        return(ctx.backpack.select().count()<=27 && me.getHealthPercent()>=75 && distanceToUnicorns()<=10
+            && interacting == null && !loot.getName().equals("Unicorn Horn") && item!=nilItem
+            && !lootCheck.activate() && theUnicorn==nilNpc); //&& !attackCheck.activate());
     }
 
     public void execute(){
         me = ctx.players.local();
         BlackUnicornKiller.status="Pacing to find Unicorns.";
+        System.out.println("Pace Unis ACTIVATED.");
 
         if(me.getLocation().distanceTo(endTile)<=6){
             placement = 'E';
@@ -135,6 +166,11 @@ public class PaceUnicornsHandler extends Job {
         if(placement == 'E'){
             ctx.movement.newTilePath(unicornPacePathReverse).traverse();
         }
+
+        Delay.sleep(400,600);
+        loot=nilGround;
+        item=nilItem;
+        theUnicorn=nilNpc;
 
 
 
